@@ -3,8 +3,8 @@ package Controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import Service.*;
-import Model.*;
+import Model.Account;
+import Service.AccountService;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 
@@ -28,8 +28,12 @@ public class SocialMediaController {
      */
     public Javalin startAPI() {
         Javalin app = Javalin.create();
-        //1. Process registration POST localhost:8080/register
+        //1. Process registration - POST localhost:8080/register
         app.post("/register", this::registerHandler);
+
+        //2. Process logins- POST localhost:8080/login 
+        app.post("/login", this::loginHandler);
+
 
         return app;
     }
@@ -45,17 +49,6 @@ public class SocialMediaController {
      * 
      */
     private void registerHandler(Context context) throws JsonProcessingException {
-        /** private void postAuthorHandler(Context ctx) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        Author author = mapper.readValue(ctx.body(), Author.class);
-        Author addedAuthor = authorService.addAuthor(author);
-        if(addedAuthor!=null){
-            ctx.json(mapper.writeValueAsString(addedAuthor));
-        }else{
-            ctx.status(400);
-        }
-        }
-        */
         ObjectMapper mapper = new ObjectMapper();
         Account account = mapper.readValue(context.body(), Account.class);
         Account addedAccount = accountService.addAccount(account);
@@ -68,6 +61,34 @@ public class SocialMediaController {
             // else not successful registration
             context.status(400);
         }
+    }
+
+    /**
+     * 2: API should be able to process User logins.
+     * Verify login on the endpoint POST localhost:8080/login. 
+     * The request body will contain a JSON representation of an Account, not containing an account_id. In the future, this action may generate a Session token to allow the user to securely use the site. We will not worry about this for now.
+     *   - The login will be successful if and only if the username and password provided in the request body JSON match a real account existing on the database. 
+     *     If successful, the response body should contain a JSON of the account in the response body, including its account_id. 
+     *     The response status should be 200 OK, which is the default.
+     *   - If the login is not successful, the response status should be 401. (Unauthorized)
+     * 
+     * @param context
+     * @throws JsonProcessingException
+     */
+    private void loginHandler(Context context) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        Account account = mapper.readValue(context.body(), Account.class);
+        Account loginAccount = accountService.loginAccount(account);
+
+        // if unique account return JSON Account
+        if (loginAccount != null){
+            context.json(mapper.writeValueAsString(loginAccount));
+            context.status(200);
+        } else { 
+            // Unauthorized login
+            context.status(401);
+        }
+
     }
 
 
