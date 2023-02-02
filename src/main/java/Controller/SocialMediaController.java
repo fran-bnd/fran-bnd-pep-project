@@ -17,6 +17,10 @@ public class SocialMediaController {
 
     AccountService accountService;
 
+    public SocialMediaController(){
+        this.accountService = new AccountService();
+    }
+
     /**
      * In order for the test cases to work, you will need to write the endpoints in the startAPI() method, as the test
      * suite must receive a Javalin object from this method.
@@ -57,10 +61,13 @@ public class SocialMediaController {
         Account addedAccount = accountService.addAccount(account);
 
         // if new unique account return JSON Account
-        context.json(mapper.writeValueAsString(addedAccount));
-        context.status(200);
-        // else not successful registration
-        //context.status(400);
+        if (addedAccount != null){
+            context.json(mapper.writeValueAsString(addedAccount));
+            context.status(200);
+        } else { 
+            // else not successful registration
+            context.status(400);
+        }
     }
 
 

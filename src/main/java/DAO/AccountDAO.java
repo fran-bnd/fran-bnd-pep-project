@@ -1,8 +1,8 @@
 package DAO;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
+//import java.util.ArrayList;
+//import java.util.List;
 
 import Model.Account;
 import Util.ConnectionUtil;
@@ -40,8 +40,8 @@ public class AccountDAO {
     public Account insertNewAccount(Account newAccount){
         Connection connection = ConnectionUtil.getConnection();
         try {
-            // ? Database may automatically generate a primary key.
-            String sql = "insert into Account values (?,?);" ;
+            // assuming database may automatically generate a primary key.
+            String sql = "insert into account(username, password) values (?,?);" ;
             PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
             // preparedStatement's setString method 
@@ -52,12 +52,15 @@ public class AccountDAO {
             ResultSet pkeyResultSet = preparedStatement.getGeneratedKeys();
             if(pkeyResultSet.next()){
                 int generated_newAccount_id = (int) pkeyResultSet.getLong(1);
-                return new Account(generated_newAccount_id, newAccount.getUsername(),newAccount.getPassword());
+                return new Account(generated_newAccount_id, newAccount.getUsername(), newAccount.getPassword());
             }
+            
         }catch(SQLException e){
             System.out.println(e.getMessage());
         }
         return null;
+        //return new Account(1, newAccount.getUsername(), newAccount.getPassword());
+
     }
     
 }
