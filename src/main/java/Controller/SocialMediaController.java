@@ -1,10 +1,14 @@
 package Controller;
 
+import java.util.List;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import Model.*;
-import Service.*;
+import Model.Account;
+import Model.Message;
+import Service.AccountService;
+import Service.MessageService;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 
@@ -45,6 +49,9 @@ public class SocialMediaController {
         //5. Get a message by its Id - GET localhost:8080/messages/{message_id}
         app.get("/messages/{message_id}", this::getMessageByIdHandler);
 
+        //6. Delete a message - DELETE localhost:8080/messages/{message_id} 
+        app.delete("/messages/{message_id}", this::deleteMessageHandler); 
+        
 
         return app;
     }
@@ -133,24 +140,13 @@ public class SocialMediaController {
           It is expected for the list to simply be empty if there are no messages. The response status should always be 200, which is the default.
      */
     private void getAllMessagesHandler(Context context) throws JsonProcessingException {
-        /**
         ObjectMapper mapper = new ObjectMapper();
         //Message message = mapper.readValue(context.body(), Message.class);
-        Message allMessages = messageService.getAllMessages();
+        List<Message> allMessages = messageService.getAllMessages();
 
-        //class  private void getAllFlightsHandler(Context ctx){ctx.json(flightService.getAllFlights());}
-
-        // if new unique return JSON messages
-        if (allMessages != null){
-            context.json(mapper.writeValueAsString(allMessages));
-            context.status(200);
-        } else { 
-            // else not successful
-            context.status(400);
-        }
-        */
-        context.json(messageService.getAllMessages());
-
+        //always 200, which is the default response
+        context.json(mapper.writeValueAsString(allMessages));
+        context.status(200);
     }
 
     /**
@@ -176,6 +172,24 @@ public class SocialMediaController {
         }
     }
 
+    /**
+     * 6: API should be able to delete a message identified by a message ID.
+        Submit a DELETE request on the endpoint DELETE localhost:8080/messages/{message_id}. 
+        - The deletion of an existing message should remove an existing message from the database. 
+        If the message existed, the response body should contain the now-deleted message. 
+        The response status should be 200, which is the default.
+        - If the message did not exist, the response status should be 200, but the response body should be empty. 
+        This is because the DELETE verb is intended to be idempotent, ie, multiple calls to the DELETE endpoint should respond with the same type of response.
+     */
 
+    private void deleteMessageHandler(Context context) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        int messageId = Integer.parseInt(context.pathParam("message_id"));
+        Message deletedMessage = messageService.deleteMessageById(messageId);
+            
+        //always 200, which is the default response
+        context.json(mapper.writeValueAsString(deletedMessage));
+        context.status(200);
+    }
 
 }

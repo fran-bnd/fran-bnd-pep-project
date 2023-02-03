@@ -1,7 +1,7 @@
-commit 83d8cbb3b2c4f0b15aae6ff1f84084109f6994e7
+commit c2bf29ae5b52463a9d7efb900d7f74238c7826a1
 Author: fran-bnd <fran-bnd@hotmail.com>
-Date:   Fri Feb 3 02:13:29 2023 +0000
+Date:   Fri Feb 3 18:54:20 2023 +0000
 
-    created getAllMessages
+    pass up to get messages/{id}
 
- 5 files changed, 132 insertions(+), 199 deletions(-)
+ 5 files changed, 102 insertions(+), 47 deletions(-)

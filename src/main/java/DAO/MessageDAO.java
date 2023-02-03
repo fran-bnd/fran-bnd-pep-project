@@ -1,8 +1,8 @@
 package DAO;
 
 import java.sql.*;
-//import java.util.ArrayList;
-//import java.util.List;
+import java.util.ArrayList;
+import java.util.List;
 
 import Model.*;
 import Util.ConnectionUtil;
@@ -19,25 +19,48 @@ public class MessageDAO {
         foreign key (posted_by) references Account(account_id)
      */
 
-     public Message getAllMesages(Message allMessages){
+     public List<Message> getAllMesages(){
+        /**
+         *  public List<Book> getAllBooks(){
+            Connection connection = ConnectionUtil.getConnection();
+            List<Book> books = new ArrayList<>();
+            try {
+                //Write SQL logic here
+                String sql = "select * from Book;";
+                PreparedStatement preparedStatement = connection.prepareStatement(sql);
+                ResultSet rs = preparedStatement.executeQuery();
+                while(rs.next()){
+                    Book book = new Book(rs.getInt("isbn"),
+                            rs.getInt("author_id"),
+                            rs.getString("title"),
+                            rs.getInt("copies_available"));
+                    books.add(book);
+                }
+            }catch(SQLException e){
+                System.out.println(e.getMessage());
+            }
+            return books;
+            }
+         */
         Connection connection = ConnectionUtil.getConnection();
+        List<Message> messages = new ArrayList<>();
         try {
             String sql = "SELECT * FROM message;";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
 
             ResultSet rs = preparedStatement.executeQuery();
             while(rs.next()){
-                Message allMessagesQuery = new Message(rs.getInt("message_id"), 
+                Message aMessageQuery = new Message(rs.getInt("message_id"), 
                             rs.getInt("posted_by"), 
                             rs.getString("message_text"),
                             rs.getLong("time_posted_epoch"));
-            return allMessagesQuery;
+                messages.add(aMessageQuery);
             }
 
         }catch(SQLException e){
             System.out.println(e.getMessage());
         }
-        return null;
+        return messages;
     }
 
 
@@ -93,4 +116,28 @@ public class MessageDAO {
     public Message patchAMessage(Message message){
             return null;
         }
+
+
+    public Message deleteMessageById(int messageId) {
+        Connection connection = ConnectionUtil.getConnection();
+        try {
+            String sql = "DELETE FROM message WHERE message_id = ?;";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+
+            preparedStatement.setInt(1, messageId);
+
+            ResultSet rs = preparedStatement.executeQuery();
+            while(rs.next()){
+                Message theMessageQuery = new Message(rs.getInt("message_id"), 
+                            rs.getInt("posted_by"), 
+                            rs.getString("message_text"),
+                            rs.getLong("time_posted_epoch"));
+            return theMessageQuery;
+            }
+
+        }catch(SQLException e){
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
 }

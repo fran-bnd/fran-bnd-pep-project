@@ -1,6 +1,6 @@
 package Service;
 
-//import java.util.List;
+import java.util.List;
 
 import DAO.*;
 import Model.*;
@@ -22,8 +22,8 @@ public class MessageService {
         this.messageDAO = new MessageDAO();
      }
 
-     public Message getAllMessages(){
-        return messageDAO.getAllMesages(getAllMessages());
+     public List<Message> getAllMessages(){
+        return messageDAO.getAllMesages();
      }
 
      public Message addMessage(Message message){
@@ -42,6 +42,17 @@ public class MessageService {
         //The login will be successful if and only if the username and password provided in the request body JSON match a real account existing on the database. 
         return messageDAO.patchAMessage(message);
      }
+
+    public Message deleteMessageById(int messageId) {
+         //The deletion of an existing message should remove an existing message from the database. 
+         //If the message existed, the response body should contain the now-deleted message. 
+         //The response status should be 200, which is the default.
+
+         Message messageToDelete = messageDAO.getMessagebyId(messageId);
+         if (messageToDelete != null) messageDAO.deleteMessageById(messageId);
+
+        return messageToDelete;
+    }
      
      
 }
