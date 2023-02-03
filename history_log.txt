@@ -1,7 +1,7 @@
-commit 6b27980b6458ca11c8dc944f868bde3a11fc21f3
+commit 83d8cbb3b2c4f0b15aae6ff1f84084109f6994e7
 Author: fran-bnd <fran-bnd@hotmail.com>
-Date:   Fri Feb 3 01:43:52 2023 +0000
+Date:   Fri Feb 3 02:13:29 2023 +0000
 
-    Passed some messages tests
+    created getAllMessages
 
- 8 files changed, 155 insertions(+), 120 deletions(-)
+ 5 files changed, 132 insertions(+), 199 deletions(-)

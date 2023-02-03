@@ -23,19 +23,24 @@ public class MessageService {
      }
 
      public Message getAllMessages(){
-        return null;
+        return messageDAO.getAllMesages(getAllMessages());
      }
 
      public Message addMessage(Message message){
-        //The registration will be successful if and only if the username is not blank, the password is at least 4 characters long, and an Account with that username does not already exist. If all these conditions are met, the response body should contain a JSON of the Account, including its account_id. The response status should be 200 OK, which is the default. The new account should be persisted to the database.
-        if (message.message_text == "") return null;
+        //The creation of the message will be successful if and only if the message_text is not blank, is under 255 characters, and posted_by refers to a real, existing user. 
+         if (message.message_text == "") return null;
 
         return messageDAO.insertNewMessage(message);
      }
 
-     public Message postMessage(Message message){
+     public Message getMessageById(int messageId){
+      // by message Id
+      return messageDAO.getMessagebyId(messageId);
+     }
+
+     public Message patchMessage(Message message){
         //The login will be successful if and only if the username and password provided in the request body JSON match a real account existing on the database. 
-        return messageDAO.postAMessage(message);
+        return messageDAO.patchAMessage(message);
      }
      
      

@@ -42,6 +42,10 @@ public class SocialMediaController {
         //4. Retrieve all messages - GET localhost:8080/messages
         app.get("/messages", this::getAllMessagesHandler);
 
+        //5. Get a message by its Id - GET localhost:8080/messages/{message_id}
+        app.get("/messages/{message_id}", this::getMessageByIdHandler);
+
+
         return app;
     }
 
@@ -129,9 +133,12 @@ public class SocialMediaController {
           It is expected for the list to simply be empty if there are no messages. The response status should always be 200, which is the default.
      */
     private void getAllMessagesHandler(Context context) throws JsonProcessingException {
+        /**
         ObjectMapper mapper = new ObjectMapper();
         //Message message = mapper.readValue(context.body(), Message.class);
         Message allMessages = messageService.getAllMessages();
+
+        //class  private void getAllFlightsHandler(Context ctx){ctx.json(flightService.getAllFlights());}
 
         // if new unique return JSON messages
         if (allMessages != null){
@@ -141,7 +148,34 @@ public class SocialMediaController {
             // else not successful
             context.status(400);
         }
+        */
+        context.json(messageService.getAllMessages());
+
     }
+
+    /**
+     * 5: API should be able to retrieve a message by its ID.
+        Submit a GET request on the endpoint GET localhost:8080/messages/{message_id}.
+        - The response body should contain a JSON representation of the message identified by the message_id. 
+        It is expected for the response body to simply be empty if there is no such message. 
+        The response status should always be 200, which is the default.
+     */
+    private void getMessageByIdHandler(Context context) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        //int for the Id and pathParam to use the value from the API call
+        int messageId = Integer.parseInt(context.pathParam("message_id"));
+        Message theMessage = messageService.getMessageById(messageId);
+
+        // if new unique return JSON messages
+        if (theMessage != null){
+            context.json(mapper.writeValueAsString(theMessage));
+            context.status(200);
+        } else { 
+            // else not successful
+            context.status(400);
+        }
+    }
+
 
 
 }
