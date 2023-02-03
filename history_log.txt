@@ -1,7 +1,7 @@
-commit 1b964eabae6366366077b612c1083376ffeb70f2
+commit 183fa4c0083cc99a6f9ea55a4a828eb25418f278
 Author: fran-bnd <fran-bnd@hotmail.com>
-Date:   Thu Feb 2 23:43:20 2023 +0000
+Date:   Fri Feb 3 00:38:14 2023 +0000
 
-    pass 3, 4, 5 test on register and login
+    All AuthIntegrationTest test passed
 
- 4 files changed, 127 insertions(+), 526 deletions(-)
+ 4 files changed, 62 insertions(+), 208 deletions(-)

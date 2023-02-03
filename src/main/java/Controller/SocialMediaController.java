@@ -3,8 +3,8 @@ package Controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import Model.Account;
-import Service.AccountService;
+import Model.*;
+import Service.*;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 
@@ -16,9 +16,11 @@ import io.javalin.http.Context;
 public class SocialMediaController {
 
     AccountService accountService;
+    MessageService messageService;
 
     public SocialMediaController(){
         this.accountService = new AccountService();
+        this.messageService = new MessageService();
     }
 
     /**
@@ -33,6 +35,9 @@ public class SocialMediaController {
 
         //2. Process logins- POST localhost:8080/login 
         app.post("/login", this::loginHandler);
+
+        //3. Creation of new messages - POST localhost:8080/messages
+        app.post("/messages", this::messagesHandler);
 
 
         return app;
@@ -88,8 +93,33 @@ public class SocialMediaController {
             // Unauthorized login
             context.status(401);
         }
-
     }
+
+    /**
+     * 3: API should be able to process the creation of new messages.
+        Submit a new post on the endpoint POST localhost:8080/messages. 
+        The request body will contain a JSON representation of a message, which should be persisted to the database, but will not contain a message_id.
+
+        - The creation of the message will be successful if and only if the message_text is not blank, is under 255 characters, and posted_by refers to a real, existing user. 
+          If successful, the response body should contain a JSON of the message, including its message_id. The response status should be 200, which is the default. 
+          The new message should be persisted to the database.
+        - If the creation of the message is not successful, the response status should be 400. (Client error)
+    */
+    private void messagesHandler(Context context) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        Message message = mapper.readValue(context.body(), Message.class);
+        Message addedMessage = messageService.addMessage(message);
+
+        // if new unique account return JSON Account
+        if (addedMessage != null){
+            context.json(mapper.writeValueAsString(addedMessage));
+            context.status(200);
+        } else { 
+            // else not successful registration
+            context.status(400);
+        }
+    }
+
 
 
 }

@@ -5,35 +5,33 @@ package Service;
 import DAO.*;
 import Model.*;
 
-public class AccountService {
+public class MessageService {
     
-     private AccountDAO accountDAO;
+     private MessageDAO messageDAO;
 
-     //Constructor for creating new AccountService() with a new AccountDAO()
-     public AccountService(){
-        accountDAO = new AccountDAO();
+     //Constructor for creating new Service() with a new messageDAO()
+     public MessageService(){
+        messageDAO = new MessageDAO();
      }
 
      /**
-      * Constructor when AccountDAO is provided
-      * @param accountDAO
+      * Constructor when messageDAO is provided
+      * @param messageDAO
       */
-     public AccountService(AccountDAO accountDAO){
-        this.accountDAO = new AccountDAO();
+     public MessageService(MessageDAO messageDAO){
+        this.messageDAO = new MessageDAO();
      }
 
-     public Account addAccount(Account account){
+     public Message addMessage(Message message){
         //The registration will be successful if and only if the username is not blank, the password is at least 4 characters long, and an Account with that username does not already exist. If all these conditions are met, the response body should contain a JSON of the Account, including its account_id. The response status should be 200 OK, which is the default. The new account should be persisted to the database.
-        if (account.username == "") return null;
-        if (account.password.length() < 4) return null;
+        if (message.message_text == "") return null;
 
-        return accountDAO.insertNewAccount(account);
+        return messageDAO.insertNewMessage(message);
      }
 
-     public Account loginAccount(Account account){
+     public Message postMessage(Message message){
         //The login will be successful if and only if the username and password provided in the request body JSON match a real account existing on the database. 
-        
-        return accountDAO.loginIntoAccount(account);
+        return messageDAO.postAMessage(message);
      }
      
      
