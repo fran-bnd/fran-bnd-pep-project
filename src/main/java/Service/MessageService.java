@@ -38,11 +38,6 @@ public class MessageService {
       return messageDAO.getMessagebyId(messageId);
      }
 
-     public Message patchMessage(Message message){
-        //The login will be successful if and only if the username and password provided in the request body JSON match a real account existing on the database. 
-        return messageDAO.patchAMessage(message);
-     }
-
     public Message deleteMessageById(int messageId) {
          //The deletion of an existing message should remove an existing message from the database. 
          //If the message existed, the response body should contain the now-deleted message. 
@@ -53,6 +48,14 @@ public class MessageService {
 
         return messageToDelete;
     }
+
+    public List<Message> getMessageByAccId(int accId) {
+        return messageDAO.getMessageByAccId(accId);
+    }
+
+   public Message patchMessageById(int messageId) {
+      return messageDAO.patchMessageById(messageId);
+   }
      
      
 }

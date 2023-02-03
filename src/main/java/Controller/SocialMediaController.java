@@ -12,11 +12,7 @@ import Service.MessageService;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 
-/**
- * TODO: You will need to write your own endpoints and handlers for your controller. The endpoints you will need can be
- * found in readme.md as well as the test cases. You should
- * refer to prior mini-project labs and lecture materials for guidance on how a controller may be built.
- */
+// Defining endpoints and handlers for controller
 public class SocialMediaController {
 
     AccountService accountService;
@@ -28,8 +24,7 @@ public class SocialMediaController {
     }
 
     /**
-     * In order for the test cases to work, you will need to write the endpoints in the startAPI() method, as the test
-     * suite must receive a Javalin object from this method.
+     * Endpoints in the startAPI() method, as the test suite must receive a Javalin object from this method.
      * @return a Javalin app object which defines the behavior of the Javalin controller.
      */
     public Javalin startAPI() {
@@ -51,7 +46,13 @@ public class SocialMediaController {
 
         //6. Delete a message - DELETE localhost:8080/messages/{message_id} 
         app.delete("/messages/{message_id}", this::deleteMessageHandler); 
-        
+
+        //7. Patch message by Id - PATCH localhost:8080/messages/{message_id}
+        app.patch("/messages/{message_id}", this::patchMessageByIdHandler);
+
+        //8. Get a message by its account Id - GET localhost:8080/accounts/{account_id}/messages. 
+        app.get("/accounts/{account_id}/messages", this::getMessageByAccIdHandler);
+
 
         return app;
     }
@@ -181,7 +182,6 @@ public class SocialMediaController {
         - If the message did not exist, the response status should be 200, but the response body should be empty. 
         This is because the DELETE verb is intended to be idempotent, ie, multiple calls to the DELETE endpoint should respond with the same type of response.
      */
-
     private void deleteMessageHandler(Context context) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         int messageId = Integer.parseInt(context.pathParam("message_id"));
@@ -191,5 +191,55 @@ public class SocialMediaController {
         context.json(mapper.writeValueAsString(deletedMessage));
         context.status(200);
     }
+
+    /**
+     * 7: API should be able to update a message text identified by a message ID.
+        Submit a PATCH request on the endpoint PATCH localhost:8080/messages/{message_id}. 
+        The request body should contain a new message_text values to replace the message identified by message_id. 
+        The request body can not be guaranteed to contain any other information.
+        - The update of a message should be successful if and only if the message id already exists and the new message_text is not blank and is not over 255 characters. 
+        If the update is successful, the response body should contain the full updated message (including message_id, posted_by, message_text, and time_posted_epoch), and the response status should be 200, which is the default. 
+        The message existing on the database should have the updated message_text.
+        - If the update of the message is not successful for any reason, the response status should be 400. (Client error)
+     */
+    private void patchMessageByIdHandler(Context context) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        //int for the Id and pathParam to use the value from the API call
+        int messageId = Integer.parseInt(context.pathParam("message_id"));
+        Message theMessage = messageService.patchMessageById(messageId);
+
+        // if new unique return JSON messages
+        if (theMessage != null){
+            context.json(mapper.writeValueAsString(theMessage));
+            context.status(200);
+        } else { 
+            // else not successful
+            context.status(400);
+        }
+    }
+
+    /**
+     * 8: API should be able to retrieve all messages written by a particular user.
+        Submit a GET request on the endpoint GET localhost:8080/accounts/{account_id}/messages. 
+        - The response body should contain a JSON representation of a list containing all messages posted by a particular user, which is retrieved from the database. 
+        It is expected for the list to simply be empty if there are no messages. 
+        The response status should always be 200, which is the default.
+     */
+    private void getMessageByAccIdHandler(Context context) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        //int for the Id and pathParam to use the value from the API call
+        int accId = Integer.parseInt(context.pathParam("account_id"));
+        List<Message> theMessages = messageService.getMessageByAccId(accId);
+
+        // if new unique return JSON messages
+        if (theMessages != null){
+            context.json(mapper.writeValueAsString(theMessages));
+            context.status(200);
+        } else { 
+            // else not successful
+            context.status(400);
+        }
+    }
+    
 
 }

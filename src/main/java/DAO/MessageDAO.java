@@ -112,12 +112,6 @@ public class MessageDAO {
         return null;
     }
 
-
-    public Message patchAMessage(Message message){
-            return null;
-        }
-
-
     public Message deleteMessageById(int messageId) {
         Connection connection = ConnectionUtil.getConnection();
         try {
@@ -138,6 +132,35 @@ public class MessageDAO {
         }catch(SQLException e){
             System.out.println(e.getMessage());
         }
+        return null;
+    }
+
+
+    public List<Message> getMessageByAccId(int accId) {
+        Connection connection = ConnectionUtil.getConnection();
+        List<Message> messages = new ArrayList<>();
+        try {
+            String sql = "SELECT * FROM message WHERE posted_by = ?;";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+
+            preparedStatement.setInt(1, accId);
+
+            ResultSet rs = preparedStatement.executeQuery();
+            while(rs.next()){
+                Message theMessageQuery = new Message(rs.getInt("message_id"), 
+                            rs.getInt("posted_by"), 
+                            rs.getString("message_text"),
+                            rs.getLong("time_posted_epoch"));
+                messages.add(theMessageQuery);
+            }
+
+        }catch(SQLException e){
+            System.out.println(e.getMessage());
+        }
+        return messages;
+    }
+
+    public Message patchMessageById(int messageId) {
         return null;
     }
 }
