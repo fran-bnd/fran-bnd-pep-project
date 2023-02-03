@@ -39,6 +39,8 @@ public class SocialMediaController {
         //3. Creation of new messages - POST localhost:8080/messages
         app.post("/messages", this::messagesHandler);
 
+        //4. Retrieve all messages - GET localhost:8080/messages
+        app.get("/messages", this::getAllMessagesHandler);
 
         return app;
     }
@@ -110,7 +112,7 @@ public class SocialMediaController {
         Message message = mapper.readValue(context.body(), Message.class);
         Message addedMessage = messageService.addMessage(message);
 
-        // if new unique account return JSON Account
+        // if new unique message return JSON message
         if (addedMessage != null){
             context.json(mapper.writeValueAsString(addedMessage));
             context.status(200);
@@ -120,6 +122,26 @@ public class SocialMediaController {
         }
     }
 
+    /**
+     * 4: Our API should be able to retrieve all messages.
+        GET request on the endpoint GET localhost:8080/messages.
+        - The response body should contain a JSON representation of a list containing all messages retrieved from the database. 
+          It is expected for the list to simply be empty if there are no messages. The response status should always be 200, which is the default.
+     */
+    private void getAllMessagesHandler(Context context) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        //Message message = mapper.readValue(context.body(), Message.class);
+        Message allMessages = messageService.getAllMessages();
+
+        // if new unique return JSON messages
+        if (allMessages != null){
+            context.json(mapper.writeValueAsString(allMessages));
+            context.status(200);
+        } else { 
+            // else not successful
+            context.status(400);
+        }
+    }
 
 
 }

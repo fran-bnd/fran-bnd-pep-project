@@ -20,6 +20,33 @@ public class MessageDAO {
         
      */
 
+     public Message getAllMesages(Message allMessages){
+        Connection connection = ConnectionUtil.getConnection();
+        try {
+            String sql = "SELECT * FROM message;" ;
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+
+            //preparedStatement.setString(1, allMessages.getUsername());
+            //preparedStatement.setString(2, allMessages.getPassword());
+
+            ResultSet rs = preparedStatement.executeQuery();
+
+            while(rs.next()){
+                Message allMessagesQuery = new Message(rs.getInt("message_id"), 
+                            rs.getInt("posted_by"), 
+                            rs.getString("message_text"),
+                            rs.getLong("time_posted_epoch"));
+            return allMessagesQuery;
+            }
+
+        }catch(SQLException e){
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+
+
+
      public Message insertNewMessage(Message newMessage){
         Connection connection = ConnectionUtil.getConnection();
         try {
