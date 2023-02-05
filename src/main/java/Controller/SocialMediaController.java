@@ -206,7 +206,9 @@ public class SocialMediaController {
         ObjectMapper mapper = new ObjectMapper();
         //int for the Id and pathParam to use the value from the API call
         int messageId = Integer.parseInt(context.pathParam("message_id"));
-        Message theMessage = messageService.patchMessageById(messageId);
+        //get the new message_text from the body value from the API call
+        Message message = mapper.readValue(context.body(), Message.class);
+        Message theMessage = messageService.patchMessageById(messageId, message.getMessage_text());
 
         // if new unique return JSON messages
         if (theMessage != null){

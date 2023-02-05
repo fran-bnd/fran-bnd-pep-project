@@ -1,7 +1,7 @@
-commit 9ee6d9311cea72b168d5f7047f02277c5d397021
+commit 7d4ab9d00aec9a4278f76f021a03116fbf4bfbec
 Author: fran-bnd <fran-bnd@hotmail.com>
-Date:   Fri Feb 3 20:44:32 2023 +0000
+Date:   Fri Feb 3 21:09:58 2023 +0000
 
-    deleteing messages
+    made patch and getMessage by Account Id
 
- 5 files changed, 153 insertions(+), 268 deletions(-)
+ 5 files changed, 129 insertions(+), 252 deletions(-)

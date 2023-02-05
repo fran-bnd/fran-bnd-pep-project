@@ -53,8 +53,10 @@ public class MessageService {
         return messageDAO.getMessageByAccId(accId);
     }
 
-   public Message patchMessageById(int messageId) {
-      return messageDAO.patchMessageById(messageId);
+   public Message patchMessageById(int messageId, String messageText) {
+      
+      // missing rules for message text
+      return messageDAO.patchMessageById(messageId, messageText);
    }
      
      

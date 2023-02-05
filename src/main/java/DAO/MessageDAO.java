@@ -20,28 +20,6 @@ public class MessageDAO {
      */
 
      public List<Message> getAllMesages(){
-        /**
-         *  public List<Book> getAllBooks(){
-            Connection connection = ConnectionUtil.getConnection();
-            List<Book> books = new ArrayList<>();
-            try {
-                //Write SQL logic here
-                String sql = "select * from Book;";
-                PreparedStatement preparedStatement = connection.prepareStatement(sql);
-                ResultSet rs = preparedStatement.executeQuery();
-                while(rs.next()){
-                    Book book = new Book(rs.getInt("isbn"),
-                            rs.getInt("author_id"),
-                            rs.getString("title"),
-                            rs.getInt("copies_available"));
-                    books.add(book);
-                }
-            }catch(SQLException e){
-                System.out.println(e.getMessage());
-            }
-            return books;
-            }
-         */
         Connection connection = ConnectionUtil.getConnection();
         List<Message> messages = new ArrayList<>();
         try {
@@ -138,7 +116,7 @@ public class MessageDAO {
 
     public List<Message> getMessageByAccId(int accId) {
         Connection connection = ConnectionUtil.getConnection();
-        List<Message> messages = new ArrayList<>();
+        List<Message> messagesList = new ArrayList<>();
         try {
             String sql = "SELECT * FROM message WHERE posted_by = ?;";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -151,16 +129,69 @@ public class MessageDAO {
                             rs.getInt("posted_by"), 
                             rs.getString("message_text"),
                             rs.getLong("time_posted_epoch"));
-                messages.add(theMessageQuery);
+                messagesList.add(theMessageQuery);
             }
 
         }catch(SQLException e){
             System.out.println(e.getMessage());
         }
-        return messages;
+        //always returns a list of messages- either empty or with many
+        return messagesList;
     }
 
-    public Message patchMessageById(int messageId) {
-        return null;
-    }
+    public Message patchMessageById(int messageId, String messageText) {
+        Connection connection = ConnectionUtil.getConnection();
+        try {
+            connection.setAutoCommit(false);
+
+            //first update the message text
+            String sql = "UPDATE message SET message_text = ? WHERE message_id = ?;";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+    
+            preparedStatement.setString(1, messageText);
+            preparedStatement.setInt(2, messageId);
+    
+            int rowCount = preparedStatement.executeUpdate();
+            //if update sucsesfull it'll return the updated rows
+            if (rowCount == 0) {
+                return null;
+            }
+    
+            //after update select the message by Id and it should have the updated message
+            String sqlSel = "SELECT * FROM message WHERE message_id = ?;";
+            PreparedStatement ps = connection.prepareStatement(sqlSel);
+    
+            ps.setInt(1, messageId);
+    
+            ResultSet rs = ps.executeQuery();
+            if (!rs.next()) {
+                return null;
+            }
+    
+            Message theMessageQuery = new Message(rs.getInt("message_id"), 
+                        rs.getInt("posted_by"), 
+                        rs.getString("message_text"),
+                        rs.getLong("time_posted_epoch"));
+            connection.commit();
+
+            return theMessageQuery;
+
+            } catch (SQLException e) {
+                try {
+                    connection.rollback();
+                } catch (SQLException ex) {
+                    System.out.println("Error rolling back the transaction: " + ex.getMessage());
+                }
+                System.out.println("Error updating message: " + e.getMessage());
+                return null;
+            } finally {
+                try {
+                    connection.setAutoCommit(true);
+                } catch (SQLException e) {
+                    System.out.println("Error resetting auto-commit: " + e.getMessage());
+                }
+            }
+    } 
+
+// end of public class MessageDAO    
 }
