@@ -49,7 +49,6 @@ public class MessageDAO {
             String sql = "INSERT INTO message(posted_by, message_text, time_posted_epoch) VALUES (?,?,?);";
             PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
-            // preparedStatement's setString method 
             preparedStatement.setInt(1, newMessage.getPosted_by());
             preparedStatement.setString(2, newMessage.getMessage_text());
             preparedStatement.setLong(3, newMessage.getTime_posted_epoch());
@@ -98,21 +97,17 @@ public class MessageDAO {
 
             preparedStatement.setInt(1, messageId);
 
-            ResultSet rs = preparedStatement.executeQuery();
-            while(rs.next()){
-                Message theMessageQuery = new Message(rs.getInt("message_id"), 
-                            rs.getInt("posted_by"), 
-                            rs.getString("message_text"),
-                            rs.getLong("time_posted_epoch"));
-            return theMessageQuery;
+            int rowCount = preparedStatement.executeUpdate();
+            //if delete is sucsesfull it'll return the updated rows
+            if (rowCount == 0) {
+                return null;
             }
 
         }catch(SQLException e){
             System.out.println(e.getMessage());
         }
-        return null;
+        return new Message();
     }
-
 
     public List<Message> getMessageByAccId(int accId) {
         Connection connection = ConnectionUtil.getConnection();
@@ -142,7 +137,6 @@ public class MessageDAO {
     public Message patchMessageById(int messageId, String messageText) {
         Connection connection = ConnectionUtil.getConnection();
         try {
-            connection.setAutoCommit(false);
 
             //first update the message text
             String sql = "UPDATE message SET message_text = ? WHERE message_id = ?;";
@@ -157,7 +151,7 @@ public class MessageDAO {
                 return null;
             }
     
-            //after update select the message by Id and it should have the updated message
+            //after updateing, selecting the message by Id should have the updated message
             String sqlSel = "SELECT * FROM message WHERE message_id = ?;";
             PreparedStatement ps = connection.prepareStatement(sqlSel);
     
@@ -172,26 +166,14 @@ public class MessageDAO {
                         rs.getInt("posted_by"), 
                         rs.getString("message_text"),
                         rs.getLong("time_posted_epoch"));
-            connection.commit();
 
             return theMessageQuery;
 
-            } catch (SQLException e) {
-                try {
-                    connection.rollback();
-                } catch (SQLException ex) {
-                    System.out.println("Error rolling back the transaction: " + ex.getMessage());
-                }
+        } catch (SQLException e) {
                 System.out.println("Error updating message: " + e.getMessage());
                 return null;
-            } finally {
-                try {
-                    connection.setAutoCommit(true);
-                } catch (SQLException e) {
-                    System.out.println("Error resetting auto-commit: " + e.getMessage());
-                }
-            }
+            } 
+             
     } 
 
-// end of public class MessageDAO    
-}
+} // end of public class MessageDAO 

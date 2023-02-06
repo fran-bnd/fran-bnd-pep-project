@@ -53,7 +53,6 @@ public class SocialMediaController {
         //8. Get a message by its account Id - GET localhost:8080/accounts/{account_id}/messages. 
         app.get("/accounts/{account_id}/messages", this::getMessageByAccIdHandler);
 
-
         return app;
     }
 
@@ -104,7 +103,7 @@ public class SocialMediaController {
             context.json(mapper.writeValueAsString(loginAccount));
             context.status(200);
         } else { 
-            // Unauthorized login
+            // unauthorized login
             context.status(401);
         }
     }
@@ -142,11 +141,11 @@ public class SocialMediaController {
      */
     private void getAllMessagesHandler(Context context) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
-        //Message message = mapper.readValue(context.body(), Message.class);
         List<Message> allMessages = messageService.getAllMessages();
 
-        //always 200, which is the default response
         context.json(mapper.writeValueAsString(allMessages));
+
+        //always respond 200, which is the default response
         context.status(200);
     }
 
@@ -183,12 +182,17 @@ public class SocialMediaController {
         This is because the DELETE verb is intended to be idempotent, ie, multiple calls to the DELETE endpoint should respond with the same type of response.
      */
     private void deleteMessageHandler(Context context) throws JsonProcessingException {
+        
         ObjectMapper mapper = new ObjectMapper();
         int messageId = Integer.parseInt(context.pathParam("message_id"));
         Message deletedMessage = messageService.deleteMessageById(messageId);
-            
-        //always 200, which is the default response
-        context.json(mapper.writeValueAsString(deletedMessage));
+           
+        // checking if deletedMessage is not null
+        if (deletedMessage != null) {
+            context.json(mapper.writeValueAsString(deletedMessage));
+        }
+
+        //always respond 200, which is the default response
         context.status(200);
     }
 

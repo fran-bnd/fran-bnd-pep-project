@@ -6,4 +6,4 @@ You should refer to prior mini-project lab examples and course material for guid
 
 2. MessageService.java
 - insertNewMessage
-- getMessage
+- getMessageById

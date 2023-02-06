@@ -7,4 +7,4 @@ AccountDAO
 
 MessageDAO
 - insertNewMessage
-- getMessage
+- getMessageById

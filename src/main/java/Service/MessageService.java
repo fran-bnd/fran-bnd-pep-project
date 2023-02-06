@@ -34,20 +34,23 @@ public class MessageService {
      }
 
      public Message getMessageById(int messageId){
-      // by message Id
-      return messageDAO.getMessagebyId(messageId);
+         return messageDAO.getMessagebyId(messageId);
      }
 
     public Message deleteMessageById(int messageId) {
          //The deletion of an existing message should remove an existing message from the database. 
          //If the message existed, the response body should contain the now-deleted message. 
          //The response status should be 200, which is the default.
+         //If the message did not exist, the response status should be 200, but the response body should be empty. 
 
          Message messageToDelete = messageDAO.getMessagebyId(messageId);
-         if (messageToDelete != null) messageDAO.deleteMessageById(messageId);
-
-        return messageToDelete;
-    }
+         if (messageToDelete != null){ 
+            messageDAO.deleteMessageById(messageId);
+            return messageToDelete;
+         } else {
+            return null;
+         }
+     }
 
     public List<Message> getMessageByAccId(int accId) {
         return messageDAO.getMessageByAccId(accId);
@@ -55,9 +58,12 @@ public class MessageService {
 
    public Message patchMessageById(int messageId, String messageText) {
       
-      // missing rules for message text
-      return messageDAO.patchMessageById(messageId, messageText);
+      //blank message_text should result in a response status 400
+      if (!messageText.isBlank()){
+         return messageDAO.patchMessageById(messageId, messageText);
+      } else {
+         return null;
+      }
    }
-     
      
 }

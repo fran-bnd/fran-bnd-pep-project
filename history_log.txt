@@ -1,7 +1,7 @@
-commit 7d4ab9d00aec9a4278f76f021a03116fbf4bfbec
+commit d17e91478301eb019bef1d4341c4cce831d37342
 Author: fran-bnd <fran-bnd@hotmail.com>
-Date:   Fri Feb 3 21:09:58 2023 +0000
+Date:   Sun Feb 5 21:06:52 2023 +0000
 
-    made patch and getMessage by Account Id
+    fixed patch in MessageDAO
 
- 5 files changed, 129 insertions(+), 252 deletions(-)
+ 5 files changed, 83 insertions(+), 298 deletions(-)
